@@ -1,0 +1,131 @@
+import pandas as pd
+import plotly.express as px
+import dash
+from dash import dcc, html
+from dash.dependencies import Input, Output
+
+# Load the dataset
+file_path = 'data/merged_data.csv'  # Ensure the CSV file is in the same directory as this script
+data = pd.read_csv(file_path)
+
+# Ensure 'date' column is datetime and add 'year' column if missing
+if 'year' not in data.columns:
+    data['date'] = pd.to_datetime(data['date'])
+    data['year'] = data['date'].dt.year
+
+# For the purpose of this example, let's assume we have a column 'survived_count' which gives the count of survived trees
+# If this column does not exist, you might need to create it based on your criteria. 
+# Here, we'll randomly generate this column for demonstration purposes.
+import numpy as np
+np.random.seed(0)
+data['survived_count'] = np.random.randint(0, data['tree_count'] + 1, size=len(data))
+
+# Calculate survival rate
+data['survival_rate'] = data['survived_count'] / data['tree_count'] * 100
+
+# Initialize the Dash app
+app = dash.Dash(__name__)
+
+# Layout of the dashboard
+app.layout = html.Div([
+    html.H1("Tree Planting Dashboard", style={'text-align': 'center'}),
+    
+    # Dropdown for selecting species
+    html.Label("Select Species"),
+    dcc.Dropdown(
+        id='species-dropdown',
+        options=[{'label': species, 'value': species} for species in data['species'].unique()],
+        value=data['species'].unique()[0]
+    ),
+    
+    # Dropdown for selecting year
+    html.Label("Select Year"),
+    dcc.Dropdown(
+        id='year-dropdown',
+        options=[{'label': year, 'value': year} for year in data['year'].unique()],
+        value=data['year'].unique()[0]
+    ),
+    
+    # Dropdown for selecting system
+    html.Label("Select System"),
+    dcc.Dropdown(
+        id='system-dropdown',
+        options=[{'label': system, 'value': system} for system in data['system'].unique()],
+        value=data['system'].unique()[0]
+    ),
+    
+    # Graph for tree count by species
+    dcc.Graph(id='tree-count-graph'),
+    
+    # Summary statistics
+    html.Div(id='summary-stats', className='summary-stats'),
+    
+    # Pie chart for species distribution
+    dcc.Graph(id='species-distribution-pie'),
+    
+    # Line chart for tree count over time
+    dcc.Graph(id='tree-count-over-time-line'),
+    
+    # Bar chart for survival rate by plot
+    dcc.Graph(id='survival-rate-plot')
+])
+
+# Callback to update the graph and summary stats based on selected filters
+@app.callback(
+    [Output('tree-count-graph', 'figure'),
+     Output('summary-stats', 'children'),
+     Output('species-distribution-pie', 'figure'),
+     Output('tree-count-over-time-line', 'figure'),
+     Output('survival-rate-plot', 'figure')],
+    [Input('species-dropdown', 'value'),
+     Input('year-dropdown', 'value'),
+     Input('system-dropdown', 'value')]
+)
+def update_dashboard(selected_species, selected_year, selected_system):
+    filtered_data = data[(data['species'] == selected_species) & 
+                         (data['year'] == selected_year) & 
+                         (data['system'] == selected_system)]
+    
+    # Bar chart for tree count by species
+    tree_count_fig = px.bar(filtered_data, x='plot_id', y='tree_count', 
+                            title=f'Tree Count for {selected_species} in {selected_year} ({selected_system})',
+                            color='tree_count', color_continuous_scale='Viridis')
+    
+    # Summary statistics
+    total_trees = filtered_data['tree_count'].sum()
+    avg_trees_per_plot = filtered_data['tree_count'].mean()
+    num_plots = filtered_data['plot_id'].nunique()
+    total_survived_trees = filtered_data['survived_count'].sum()
+    avg_survival_rate = filtered_data['survival_rate'].mean()
+    summary_stats = [
+        html.H3("Summary Statistics"),
+        html.P(f"Total Trees: {total_trees}"),
+        html.P(f"Average Trees per Plot: {avg_trees_per_plot:.2f}"),
+        html.P(f"Number of Plots: {num_plots}"),
+        html.P(f"Total Survived Trees: {total_survived_trees}"),
+        html.P(f"Average Survival Rate: {avg_survival_rate:.2f}%")
+    ]
+    
+    # Pie chart for species distribution
+    species_distribution_fig = px.pie(data, names='species', values='tree_count', 
+                                      title='Species Distribution',
+                                      color_discrete_sequence=px.colors.qualitative.Pastel)
+    
+    # Line chart for tree count over time
+    time_series_data = data[(data['species'] == selected_species) & 
+                            (data['system'] == selected_system)]
+    tree_count_over_time_fig = px.line(time_series_data, x='date', y='tree_count', 
+                                       title=f'Tree Count Over Time for {selected_species} ({selected_system})',
+                                       markers=True, line_shape='spline', 
+                                       color_discrete_sequence=['#FF5733'])
+    
+    # Bar chart for survival rate by plot
+    survival_rate_fig = px.bar(filtered_data, x='plot_id', y='survival_rate', 
+                               title=f'Survival Rate by Plot for {selected_species} in {selected_year} ({selected_system})',
+                               color='survival_rate', color_continuous_scale='Bluered')
+    
+    return tree_count_fig, summary_stats, species_distribution_fig, tree_count_over_time_fig, survival_rate_fig
+
+# Run the app
+if __name__ == '__main__':
+    app.run_server(debug=True)

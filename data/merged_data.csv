@@ -1,0 +1,31 @@
+server_id_x,plot_id,species,tree_count,server_id_y,date,system,year ,area_ac,water_source,planting_plan_per_acre
+1,a11,mango,10,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+1,a11,coffee,11,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+1,a11,jackfruit,4,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+1,a11,eucalyptus,7,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+2,a11,mango,10,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+2,a11,coffee,11,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+2,a11,jackfruit,4,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+2,a11,eucalyptus,7,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+3,a11,mango,10,2,2019-02-06,coffee,2019,0.9,"a,b,c",30
+4,a12,pepper,7,4,2020-05-05,agro1,2020,1.2,a,25
+4,a12,coffee,11,4,2020-05-05,agro1,2020,1.2,a,25
+4,a12,teak,7,4,2020-05-05,agro1,2020,1.2,a,25
+4,a12,na,3,4,2020-05-05,agro1,2020,1.2,a,25
+5,a13, ,2,5,2021-04-03,agro2,2021,3.0,c,80
+5,a13,other,5,5,2021-04-03,agro2,2021,3.0,c,80
+5,a13,mango,4,5,2021-04-03,agro2,2021,3.0,c,80
+6,a14,other,3,6,2021-02-03,agro1,2022,0.2,"a,c",25
+8,a16,silveroak,11,8,2022-08-09,agro2,2022,2.3,b,80
+9,a17,mango,4,9,2021-08-09,coffee,2021,0.7,c,30
+9,a17,pepper,3,9,2021-08-09,coffee,2021,0.7,c,30
+9,a17,other,4,9,2021-08-09,coffee,2021,0.7,c,30
+9,a17,custard_apple,3,9,2021-08-09,coffee,2021,0.7,c,30
+11,a19,teak,2,11,2020-04-03,agro2,2020,0.2,a,80
+11,a19,silveroak,3,11,2020-04-03,agro2,2020,0.2,a,80
+11,a19,pepper,1,11,2020-04-03,agro2,2020,0.2,a,80
+11,a19,mango,2,11,2020-04-03,agro2,2020,0.2,a,80
+12,a20,jackfruit,13,13,2021-11-08,agro1,2021,2.3,b,25
+13,a20,jackfruit,13,13,2021-11-08,agro1,2021,2.3,b,25
+12,a20,mango,20,13,2021-11-08,agro1,2021,2.3,b,25
+13,a20,mango,20,13,2021-11-08,agro1,2021,2.3,b,25
